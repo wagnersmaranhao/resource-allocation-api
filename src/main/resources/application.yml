@@ -1,0 +1,20 @@
+user.name: SYSTEM
+
+spring.application.name: J2C Resource Manager
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    dialect: org.hibernate.dialect.MySQL9Dialect
+    url: jdbc:mysql://localhost:3306/j2crm
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+#    generate-ddl: true
+#    hibernate.ddl-auto: update
+
+
+file:
+  path: C:\Accenture\j2c\files\
+
