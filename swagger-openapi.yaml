@@ -1,0 +1,1043 @@
+openapi: 3.1.0
+info:
+  title: MMD
+  description: API documentation for MMD v2.0 application.
+  termsOfService: https://www.accenture.com/pt-pt/support/terms-of-use
+  contact:
+    name: Support Team
+    url: https://www.accenture.com/ch-en/about/contact-us
+    email: support@accenture.com
+  license:
+    name: MIT License
+    url: https://www.accenture.com/us-en/license
+  version: 2.0.0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+tags:
+  - name: Resource Management
+    description: Operations related to resources
+  - name: Project Management
+    description: Operations related to projects
+  - name: Position Management
+    description: Operations related to positions
+paths:
+  /resource:
+    post:
+      tags:
+        - Resource Management
+      summary: Create a new resource
+      description: Creates a new resource and returns the created resource.
+      operationId: create_resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceDTO'
+        required: true
+      responses:
+        '201':
+          description: Resource created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResourceDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+    get:
+      tags:
+        - Resource Management
+      summary: Get resources [OPTIONAL]
+      description: >-
+        Retrieves a paginated list of resources based on the provided filter
+        criteria. Deleted resources should not be retrieved by default.
+      operationId: retrieve_resource_pageable
+      parameters:
+        - name: filter
+          in: query
+          schema:
+            $ref: '#/components/schemas/Filter'
+        - name: page
+          in: query
+          description: Page number (default 0)
+          content:
+            text/plain:
+              schema:
+                type: string
+        - name: size
+          in: query
+          description: Page size (default 20)
+          content:
+            text/plain:
+              schema:
+                type: string
+        - name: sort
+          in: query
+          description: >-
+            Sorting criteria in the format: property(,asc|desc). Default sort
+            order is ascending.
+          content:
+            text/plain:
+              schema:
+                type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageResourceDTO'
+        '400':
+          description: Invalid filter criteria
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /resource/{id}:
+    get:
+      tags:
+        - Resource Management
+      summary: Get a specific resource
+      description: >-
+        Fetches a resource by its ID. Deleted resources should not be retrieved
+        by default.
+      operationId: retrieve_resource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: include
+          in: query
+          description: fields to include (by default should be only the main ones)
+          schema:
+            type: string
+            examples:
+              - projects
+      responses:
+        '200':
+          description: Resource retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResourceDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Resource not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResourceDTO'
+    put:
+      tags:
+        - Resource Management
+      summary: Update a resource [OPTIONAL]
+      description: Updates an existing resource by its ID and returns the updated resource.
+      operationId: update_resource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceDTO'
+        required: true
+      responses:
+        '200':
+          description: Resource updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResourceDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Resource not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResourceDTO'
+    delete:
+      tags:
+        - Resource Management
+      summary: Delete a resource
+      description: >-
+        Deletes a resource by its ID. Deleting any resource sould free up
+        positions where resource was allocated.
+      operationId: delete_resource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Resource deleted successfully
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Resource not found
+  /resource/{id}/cv:
+    post:
+      tags:
+        - Resource Management
+      summary: Upload a resource CV  [OPTIONAL]
+      description: >-
+        Upload a resource CV to the bucket path id/date_time and returns the
+        generated ID.
+      operationId: upload_resource_cv
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: CV successfully uploaded
+        '400':
+          description: Bad request
+    get:
+      tags:
+        - Resource Management
+      summary: Download current resource CV [OPTIONAL]
+      description: Downloads the most recent uploaded CV of the resource from the bucket
+      operationId: download_resource_cv
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: CV Successfully downloaded
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+  /project:
+    post:
+      tags:
+        - Project Management
+      summary: Create a new project
+      description: Creates a new project and returns the created project.
+      operationId: create_project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectDTO'
+        required: true
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProjectDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+    get:
+      tags:
+        - Project Management
+      summary: Get projects [PAGINATION AS OPTIONAL]
+      description: >-
+        Retrieves a paginated list of project based on the provided filter
+        criteria. Deleted projcts should not be retrieved by default.
+      operationId: retrieve_project_pageable
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+        - name: page
+          in: query
+          description: Page number (default 0)
+          content:
+            text/plain:
+              schema:
+                type: string
+        - name: size
+          in: query
+          description: Page size (default 20)
+          content:
+            text/plain:
+              schema:
+                type: string
+        - name: sort
+          in: query
+          description: >-
+            Sorting criteria in the format: property(,asc|desc). Default sort
+            order is ascending.
+          content:
+            text/plain:
+              schema:
+                type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageProjectDTO'
+        '400':
+          description: Invalid filter criteria
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /project/{id}:
+    get:
+      tags:
+        - Project Management
+      summary: Get a specific project [OPTIONAL]
+      description: >-
+        Fetches a project by its ID. Deleted projects should not be retrieved by
+        default.
+      operationId: retrieve_project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: additionalFields
+          in: query
+          description: fields to include in response that are foreign entities
+          schema:
+            type: string
+            examples:
+              - positions
+              - resources
+      responses:
+        '200':
+          description: Project retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProjectDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Project not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProjectDTO'
+    put:
+      tags:
+        - Project Management
+      summary: Update a project [OPTIONAL]
+      description: Updates an existing project by its ID and returns the updated project.
+      operationId: update_project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectDTO'
+        required: true
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProjectDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Project not found
+    patch:
+      tags:
+        - Project Management
+      summary: Update project end date
+      description: Updates a project expected end date by its ID.
+      operationId: patch_project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeriodDTO'
+        required: true
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProjectDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Project not found
+    delete:
+      tags:
+        - Project Management
+      summary: Delete a project
+      description: >-
+        Deletes a project by its ID. Deleting a project should delete any
+        related positions/allocations.
+      operationId: delete_project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Project deleted successfully
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Project not found
+  /position:
+    post:
+      tags:
+        - Position Management
+      summary: Create a new position
+      description: Creates a new position and returns the created position.
+      operationId: create_position
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionDTO'
+        required: true
+      responses:
+        '201':
+          description: Position created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PositionDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+    get:
+      tags:
+        - Position Management
+      summary: Get positions with pagination [PAGINATION AS OPTIONAL]
+      description: >-
+        Retrieves a paginated list of position based on the provided filter
+        criteria. Deleted resources should not be retrieved by default.
+      operationId: retrieve_position_pageable
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+        - name: page
+          in: query
+          description: Page number (default 0)
+          content:
+            text/plain:
+              schema:
+                type: string
+        - name: size
+          in: query
+          description: Page size (default 20)
+          content:
+            text/plain:
+              schema:
+                type: string
+        - name: sort
+          in: query
+          description: >-
+            Sorting criteria in the format: property(,asc|desc). Default sort
+            order is ascending.
+          content:
+            text/plain:
+              schema:
+                type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageProjectDTO'
+        '400':
+          description: Invalid filter criteria
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /position/{id}:
+    get:
+      tags:
+        - Position Management
+      summary: Get a specific position
+      description: >-
+        Fetches a position by its ID. Deleted positions should not be retrieved
+        by default.
+      operationId: retrieve_position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Position retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PositionDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Position not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PositionDTO'
+    put:
+      tags:
+        - Position Management
+      summary: Update a position
+      description: Updates an existing position by its ID and returns the updated position.
+      operationId: update_position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionDTO'
+        required: true
+      responses:
+        '200':
+          description: Position updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PositionDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Position not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PositionDTO'
+    delete:
+      tags:
+        - Position Management
+      summary: Delete a position
+      description: Deletes a position by its ID.
+      operationId: delete_position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Position deleted successfully
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Position not found
+  /position/{id}/resource/{resourceId}:
+    post:
+      tags:
+        - Position Management
+      summary: Add resource to a position
+      description: Add resource to a position by Position and Resource IDs.
+      operationId: add_resource_to_position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllocationDTO'
+      responses:
+        '200':
+          description: Allocation created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllocationDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+    patch:
+      tags:
+        - Position Management
+      summary: Update allocation resource status, startDate or endDate into a position
+      description: >-
+        Update allocation resource status, startDate or endDate into a position
+        by Position and Resource ID (Update fields by what is present in runtime
+        request).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllocationUpdateDTO'
+      responses:
+        '200':
+          description: Allocation updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllocationDTO'
+        '400':
+          description: Invalid input data
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Allocation not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllocationDTO'
+    delete:
+      tags:
+        - Position Management
+      summary: Remove resource from a position
+      description: Remove resource from a position by Position and Resource ID.
+      operationId: delete_resource_from_position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Allocation deleted successfully
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Allocation not found
+components:
+  schemas:
+    ResourceDTO:
+      required:
+        - firstName
+        - lastName
+        - birthDate
+        - role
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        role:
+          type: string
+        availability:
+          type: string
+          enum:
+            - AVAILABLE
+            - UNAVAILABLE
+        cvUri:
+          type: string
+        cvLastUpdated:
+          type: string
+          format: date-time
+    ProjectDTO:
+      required:
+        - name
+        - description
+        - startDate
+        - endDate
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+        name:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - PROPOSAL
+            - INPROGRESS
+            - FINISHED
+        positions:
+          type: array
+    PositionDTO:
+      required:
+        - projectId
+        - description
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+        projectId:
+          type: string
+        description:
+          type: string
+        numberOfResources:
+          type: integer
+          format: int
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationDTO'
+        status:
+          type: string
+          enum:
+            - OPEN
+            - FILLED
+    AllocationDTO:
+      required:
+        - status
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+        positionId:
+          type: string
+        resourceId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - CONFIRMED
+            - UNCONFIRMED
+    AllocationUpdateDTO:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - CONFIRMED
+            - UNCONFIRMED
+    PeriodDTO:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+    Filter:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          examples:
+            - fieldValue
+    PageResourceDTO:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int
+        totalPages:
+          type: integer
+          format: int
+        size:
+          type: integer
+          format: int
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceDTO'
+        number:
+          type: integer
+          format: int
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean
+    PageProjectDTO:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int
+        totalPages:
+          type: integer
+          format: int
+        size:
+          type: integer
+          format: int
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectDTO'
+        number:
+          type: integer
+          format: int
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/SortObject'
+        pageSize:
+          type: integer
+          format: int
+        pageNumber:
+          type: integer
+          format: int
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        direction:
+          type: string
+        nullHandling:
+          type: string
+        ascending:
+          type: boolean
+        property:
+          type: string
+        ignoreCase:
+          type: boolean
