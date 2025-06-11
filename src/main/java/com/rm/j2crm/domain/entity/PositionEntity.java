@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JoinFormula;
 
 @Entity
 @Data
@@ -63,24 +64,16 @@ public class PositionEntity {
   @Column(name = "modified_on", nullable = false)
   private Date modifiedOn;
 
-  public void addResource(AllocationDto dto, ResourceEntity resource, Date date) {
-    AllocationEntity allocation = AllocationMapper.getInstance().map(dto, this, resource, date);
+  public void addResource(AllocationDto dto, ResourceEntity resource) {
+    AllocationEntity allocation = AllocationMapper.getInstance().map(dto, this, resource);
     this.allocations.add(allocation);
     resource.getAllocations().add(allocation);
   }
 
-  //TODO: Ver como melhorar com lambda ...
   public void removeResource(ResourceEntity resource) {
-    for (Iterator<AllocationEntity> iterator = allocations.iterator(); iterator.hasNext();) {
-      AllocationEntity allocation = iterator.next();
-
-      if (allocation.getPosition().equals(this) && allocation.getResource().equals(resource)) {
-        iterator.remove();
-        allocation.getResource().getAllocations().remove(allocation);
-        allocation.setPosition(null);
-        allocation.setResource(null);
-      }
-    }
+    allocations.stream()
+      .filter(p -> p.getResource().getId().equals(resource.getId()))
+      .forEach(v -> v.setIsDeleted(true));
   }
 
   @Override

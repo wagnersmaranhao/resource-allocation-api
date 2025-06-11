@@ -1,9 +1,9 @@
 package com.rm.j2crm.domain.access;
 
+import com.rm.j2crm.domain.entity.AllocationEntity;
 import com.rm.j2crm.domain.entity.PositionEntity;
 import com.rm.j2crm.domain.entity.ProjectEntity;
 import com.rm.j2crm.domain.enums.PositionStatusEnum;
-import com.rm.j2crm.domain.enums.ProjectStatusEnum;
 import com.rm.j2crm.domain.exception.InputDataException;
 import com.rm.j2crm.domain.exception.RecordDataException;
 import com.rm.j2crm.domain.pageable.Filter;
@@ -11,7 +11,10 @@ import com.rm.j2crm.domain.repository.PositionRepository;
 import com.rm.j2crm.domain.util.ConstantsUtil;
 import com.rm.j2crm.domain.util.FunctionsUtil;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +81,9 @@ public class PositionRepositoryAccess {
       project = projectRepositoryAccess.findById(filter.getProjectId());
     }
 
-    return repository.find(
+    boolean isDeleted = FunctionsUtil.strToBool(filter.getIsDeleted());
+
+    Page<PositionEntity> positionEntityPage = repository.find(
       project,
       filter.getTitle(),
       filter.getDescription(),
@@ -87,14 +92,35 @@ public class PositionRepositoryAccess {
       hasStarDate ? FunctionsUtil.stringToDate(filter.getStartDate()) : null,
       hasEndDate ? FunctionsUtil.stringToDate(filter.getEndDate()) : null,
       Strings.isNotEmpty(filter.getStatus()) ? PositionStatusEnum.getStatus(filter.getStatus()) : null,
-      FunctionsUtil.strToBool(filter.getIsDeleted()),
+      isDeleted,
       pageable
     );
+
+    if (!isDeleted) {
+      positionEntityPage.getContent().stream().forEach(v -> {
+        v.getAllocations().removeIf(p -> p.getIsDeleted().equals(true));
+      });
+    }
+
+    return positionEntityPage;
   }
 
   public PositionEntity findById(String id) {
     log.info("Position repository access find by id = '{}'", id);
-    return repository.findById(id)
+    PositionEntity entity = repository.findById(id)
       .orElseThrow(() -> new RecordDataException(ConstantsUtil.ERROR_NOT_FOUND.formatted(id)));
+    return entity;
+  }
+
+  //TODO: Implementar este find nas outras classes access ....
+  public PositionEntity findById(String id, boolean isDeleced) {
+    log.info("Position repository access find by id = '{}' and isDelete = '{}'", id, isDeleced);
+    PositionEntity entity = findById(id);
+
+    if (isDeleced) {
+      entity.getAllocations().removeIf(p -> p.getIsDeleted().equals(true));
+    }
+
+    return entity;
   }
 }

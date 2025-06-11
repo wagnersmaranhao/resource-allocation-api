@@ -66,6 +66,7 @@ public class ResourceRepositoryAccess {
       throw new InputDataException(ConstantsUtil.ERROR_INVALID.formatted(ConstantsUtil.END_DATE));
     }
 
+    //TODO: Implementar o find também por posisiton ....
     return repository.find(
       filter.getFirstName(),
       filter.getLastName(),
@@ -81,8 +82,7 @@ public class ResourceRepositoryAccess {
 
   public ResourceEntity findById(String id) {
     log.info("Resource repository access find by id = '{}'", id);
-    return repository
-      .findById(id)
+    return repository.findById(id)
       .orElseThrow(() -> new RecordDataException(ConstantsUtil.ERROR_NOT_FOUND.formatted(id)));
   }
 }
