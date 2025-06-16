@@ -21,7 +21,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
           "and (:endDate is null or p.endDate = :endDate)" +
           "and (:status is null or p.status = :status)" +
           "and (:isDeleted is null or p.isDeleted = :isDeleted)")
-  Page<ProjectEntity> find(
+  Page<ProjectEntity> findByFilters(
     @Param("name") String name,
     @Param("description") String description,
     @Param("startDate") Date startDate,

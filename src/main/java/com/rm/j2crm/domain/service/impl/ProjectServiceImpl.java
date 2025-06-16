@@ -49,9 +49,8 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public ProjectDto getById(String id, String fields) {
+  public ProjectDto getById(String id) {
     log.info("Project get by id({})", id);
-    //TODO: Implementar o uso do campo fields (campos a serem incluídos na resposta que são entidades estrangeiras) ...
     return ProjectMapper.getInstance().map(projectRepositoryAccess.findById(id));
   }
 

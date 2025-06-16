@@ -67,7 +67,7 @@ public class ResourceRepositoryAccess {
     }
 
     //TODO: Implementar o find também por posisiton ....
-    return repository.find(
+    return repository.findByFilters(
       filter.getFirstName(),
       filter.getLastName(),
       hasBirthDate ? FunctionsUtil.stringToDate(filter.getBirthDate()) : null,

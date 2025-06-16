@@ -12,7 +12,7 @@ public class PageableUtil {
   public static Pageable build(
       Optional<Integer> page, Optional<Integer> size, Optional<String> sort, String sortBy) {
 
-    log.info("Pageable build with page = '{}', size = '{}', sort = '{}', sortBy = '{}'", page, size, sort, sort);
+    log.info("Pageable build with page = '{}', size = '{}', sort = '{}', sortBy = '{}'", page, size, sort, sortBy);
     String strSort = sort.orElse(ConstantsUtil.SORT_DIRECTION_ASC);
 
     Sort.Direction sortDirection =

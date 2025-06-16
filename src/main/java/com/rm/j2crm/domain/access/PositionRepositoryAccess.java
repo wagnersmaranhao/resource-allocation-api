@@ -1,6 +1,5 @@
 package com.rm.j2crm.domain.access;
 
-import com.rm.j2crm.domain.entity.AllocationEntity;
 import com.rm.j2crm.domain.entity.PositionEntity;
 import com.rm.j2crm.domain.entity.ProjectEntity;
 import com.rm.j2crm.domain.enums.PositionStatusEnum;
@@ -11,9 +10,7 @@ import com.rm.j2crm.domain.repository.PositionRepository;
 import com.rm.j2crm.domain.util.ConstantsUtil;
 import com.rm.j2crm.domain.util.FunctionsUtil;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -83,7 +80,7 @@ public class PositionRepositoryAccess {
 
     boolean isDeleted = FunctionsUtil.strToBool(filter.getIsDeleted());
 
-    Page<PositionEntity> positionEntityPage = repository.find(
+    Page<PositionEntity> positionEntityPage = repository.findByFilters(
       project,
       filter.getTitle(),
       filter.getDescription(),

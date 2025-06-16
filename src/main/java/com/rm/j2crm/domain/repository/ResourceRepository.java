@@ -22,7 +22,7 @@ public interface ResourceRepository extends JpaRepository<ResourceEntity, String
       + "and (:cvUri is null or p.cvUri = :cvUri)"
       + "and (:cvLastUpdated is null or p.cvLastUpdated = :cvLastUpdated)"
       + "and (:isDeleted is null or p.isDeleted = :isDeleted)")
-  Page<ResourceEntity> find(
+  Page<ResourceEntity> findByFilters(
       @Param("firstName") String firstName,
       @Param("lastName") String lastName,
       @Param("birthDate") Date birthDate,

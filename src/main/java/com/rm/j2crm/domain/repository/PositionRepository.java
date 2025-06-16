@@ -4,8 +4,6 @@ import com.rm.j2crm.domain.entity.PositionEntity;
 import com.rm.j2crm.domain.entity.ProjectEntity;
 import com.rm.j2crm.domain.enums.PositionStatusEnum;
 import java.util.Date;
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,7 +24,7 @@ public interface PositionRepository extends JpaRepository<PositionEntity, String
            "and (:endDate is null or p.endDate = :endDate)" +
            "and (:status is null or p.status = :status)" +
            "and (:isDeleted is null or p.isDeleted = :isDeleted)")
-  Page<PositionEntity> find(
+  Page<PositionEntity> findByFilters(
     @Param("project") ProjectEntity project,
     @Param("title") String title,
     @Param("description") String description,
@@ -37,6 +35,4 @@ public interface PositionRepository extends JpaRepository<PositionEntity, String
     @Param("status") PositionStatusEnum status,
     @Param("isDeleted") Boolean isDeleted,
     Pageable pageable);
-
-    Optional<PositionEntity> findByIdAndIsDeleted(String s, Boolean isDeleted);
 }

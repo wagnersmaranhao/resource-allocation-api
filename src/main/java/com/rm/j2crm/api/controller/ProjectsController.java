@@ -39,10 +39,8 @@ public class ProjectsController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ProjectDto> detail(
-      @PathVariable String id,
-      @RequestParam(required = false) String fields) {
-    return ResponseEntity.ok(projectService.getById(id, fields));
+  public ResponseEntity<ProjectDto> detail(@PathVariable String id) {
+    return ResponseEntity.ok(projectService.getById(id));
   }
 
   @PutMapping("/{id}")

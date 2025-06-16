@@ -4,6 +4,7 @@ import com.rm.j2crm.domain.exception.InputDataException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.util.Strings;
@@ -58,5 +59,16 @@ public class FunctionsUtil {
 
   public static Boolean strToBool(String value) {
     return (Strings.isNotEmpty(value) && value.equals("true"));
+  }
+
+  public static String getDate(Date date, int days) {
+    return dateToString(addDays(date, days));
+  }
+
+  public static Date addDays(Date date, int days) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.add(Calendar.DATE, days); //minus number would decrement the days
+    return cal.getTime();
   }
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ProjectService {
     Page<ProjectDto> list(Optional<Filter> filter, Optional<Integer> page, Optional<Integer> size, Optional<String> sort);
-    ProjectDto getById(String id, String fields);
+    ProjectDto getById(String id);
     ProjectDto create(ProjectDto project);
     ProjectDto update(String id, ProjectDto project);
     ProjectDto updatePatch(String id, PeriodDto period);
