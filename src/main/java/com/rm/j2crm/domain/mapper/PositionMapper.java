@@ -70,6 +70,5 @@ public class PositionMapper {
     targetEntity.setNumberOfResources(entity.getNumberOfResources());
     targetEntity.setStartDate(FunctionsUtil.stringToDate(entity.getStartDate()));
     targetEntity.setEndDate(FunctionsUtil.stringToDate(entity.getEndDate()));
-    targetEntity.setStatus(entity.getStatus());
   }
 }

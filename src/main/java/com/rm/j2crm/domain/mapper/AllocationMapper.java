@@ -1,6 +1,7 @@
 package com.rm.j2crm.domain.mapper;
 
 import com.rm.j2crm.domain.dto.AllocationDto;
+import com.rm.j2crm.domain.dto.PeriodDto;
 import com.rm.j2crm.domain.dto.PositionDto;
 import com.rm.j2crm.domain.entity.AllocationEntity;
 import com.rm.j2crm.domain.entity.PositionEntity;
@@ -47,16 +48,12 @@ public class AllocationMapper {
   }
 
   public static AllocationEntity map(
-    AllocationDto dto, PositionEntity position, ResourceEntity resource, Date date) {
+    AllocationDto dto, PositionEntity position, ResourceEntity resource) {
       log.info("Allocation Mapper Dto to Entity");
       AllocationEntity entity = new AllocationEntity(position, resource);
       entity.setStatus(dto.getStatus());
       entity.setStartDate(FunctionsUtil.stringToDate(dto.getStartDate()));
       entity.setEndDate(FunctionsUtil.stringToDate(dto.getEndDate()));
-      entity.setCreateBy(userName);
-      entity.setCreateOn(date);
-      entity.setModifiedBy(userName);
-      entity.setModifiedOn(date);
 
       return entity;
   }
@@ -72,5 +69,13 @@ public class AllocationMapper {
     return (Objects.isNull(list) || list.isEmpty())
       ? Arrays.asList()
       : list.stream().map(e -> map(e)).collect(Collectors.toList());
+  }
+
+  public static AllocationDto map(PeriodDto period) {
+    log.info("Allocation Mapper period to DTO");
+      return AllocationDto.builder()
+        .status(period.getStatus())
+        .startDate(period.getStartDate())
+        .endDate(period.getEndDate()).build();
   }
 }

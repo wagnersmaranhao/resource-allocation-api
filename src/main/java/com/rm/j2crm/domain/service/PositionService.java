@@ -8,13 +8,23 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 
 public interface PositionService {
-    Page<PositionDto> list(Optional<Filter> filter, Optional<Integer> page, Optional<Integer> size, Optional<String> sort);
-    PositionDto getById(String id, String fields);
-    PositionDto create(PositionDto position);
-    PositionDto update(String id, PositionDto project);
-    void remove(String id);
+  Page<PositionDto> list(
+      Optional<Filter> filter,
+      Optional<Integer> page,
+      Optional<Integer> size,
+      Optional<String> sort);
 
-    AllocationDto addResource(String positionId, String resourceId, AllocationDto allocation);
-    AllocationDto updateAllocation(String positionId, String resourceId, PeriodDto period);
-void removeResource(String positionId, String resourceId);
+  PositionDto getById(String id, String fields);
+
+  PositionDto create(PositionDto position);
+
+  PositionDto update(String id, PositionDto position);
+
+  void remove(String id);
+
+  AllocationDto addResource(String positionId, String resourceId, AllocationDto allocation);
+
+  AllocationDto updateAllocation(String positionId, String resourceId, PeriodDto period);
+
+  void removeResource(String positionId, String resourceId);
 }

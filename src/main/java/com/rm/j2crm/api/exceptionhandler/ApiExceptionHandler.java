@@ -41,7 +41,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(RecordDataException.class)
-  public ResponseEntity<?> handlerRecordDataException(InputDataException ex) {
+  public ResponseEntity<?> handlerRecordDataException(RuntimeException ex) {
     return handleResponse(HttpStatus.NOT_FOUND, "Project not found", ex.getMessage());
   }
 

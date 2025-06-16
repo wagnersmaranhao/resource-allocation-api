@@ -65,7 +65,7 @@ public class ProjectRepositoryAccess {
       throw new InputDataException(ConstantsUtil.ERROR_INVALID.formatted(ConstantsUtil.END_DATE));
     }
 
-    return repository.find(
+    return repository.findByFilters(
       filter.getName(),
       filter.getDescription(),
       hasStarDate ? FunctionsUtil.stringToDate(filter.getStartDate()) : null,

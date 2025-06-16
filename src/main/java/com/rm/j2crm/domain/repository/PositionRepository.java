@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PositionRepository extends JpaRepository<PositionEntity, String> {
 
-    @Query("select p from PositionEntity p where " +
-           "(:project is null or p.project = :project)" +
+    @Query("select p from PositionEntity p " +
+           "where (:project is null or p.project = :project)" +
            "and (:title is null or p.title = :title)" +
            "and (:description is null or p.description = :description)" +
            "and (:role is null or p.role = :role)" +
@@ -24,7 +24,7 @@ public interface PositionRepository extends JpaRepository<PositionEntity, String
            "and (:endDate is null or p.endDate = :endDate)" +
            "and (:status is null or p.status = :status)" +
            "and (:isDeleted is null or p.isDeleted = :isDeleted)")
-  Page<PositionEntity> find(
+  Page<PositionEntity> findByFilters(
     @Param("project") ProjectEntity project,
     @Param("title") String title,
     @Param("description") String description,
