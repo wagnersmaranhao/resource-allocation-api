@@ -14,7 +14,7 @@ public interface PositionService {
       Optional<Integer> size,
       Optional<String> sort);
 
-  PositionDto getById(String id, String fields);
+  PositionDto getById(String id);
 
   PositionDto create(PositionDto position);
 

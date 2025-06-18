@@ -18,8 +18,6 @@ import com.rm.j2crm.domain.util.ConstantsUtil;
 import com.rm.j2crm.domain.util.FunctionsUtil;
 import com.rm.j2crm.domain.util.PageableUtil;
 import java.util.*;
-
-import com.rm.j2crm.domain.util.enums.DateEnumUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -184,6 +182,7 @@ class ProjectServiceImplTest {
 
     projectService.remove(anyString());
 
+    assertEquals(true, entity.getIsDeleted());
     verify(projectRepositoryAccess, times(1)).saveOrUpdate(any());
   }
 

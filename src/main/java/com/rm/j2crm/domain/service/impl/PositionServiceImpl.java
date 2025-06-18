@@ -70,9 +70,8 @@ public class PositionServiceImpl implements PositionService {
   }
 
   @Override
-  public PositionDto getById(String id, String fields) {
+  public PositionDto getById(String id) {
     log.info("Position get by id({})", id);
-    // TODO: Implementar o uso do campo fields (campos a serem incluídos na resposta que são entidades estrangeiras) ...
     return PositionMapper.getInstance().map(positionRepositoryAccess.findById(id));
   }
 
