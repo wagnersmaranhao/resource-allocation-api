@@ -4,6 +4,8 @@ import com.rm.j2crm.domain.dto.PeriodDto;
 import com.rm.j2crm.domain.dto.ProjectDto;
 import com.rm.j2crm.domain.entity.ProjectEntity;
 import com.rm.j2crm.domain.util.FunctionsUtil;
+
+import java.util.ArrayList;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +46,7 @@ public class ProjectMapper {
       .status(dto.getStatus())
       .startDate(FunctionsUtil.stringToDate(dto.getStartDate()))
       .endDate(FunctionsUtil.stringToDate(dto.getEndDate()))
+      .positions(new ArrayList<>())
       .build();
   }
 
