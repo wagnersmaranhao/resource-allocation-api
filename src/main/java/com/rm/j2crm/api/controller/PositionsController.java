@@ -38,9 +38,8 @@ public class PositionsController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<PositionDto> detail(
-          @PathVariable String id, @RequestParam(required = false) String fields) {
-    return ResponseEntity.ok(positionService.getById(id, fields));
+  public ResponseEntity<PositionDto> detail(@PathVariable String id) {
+    return ResponseEntity.ok(positionService.getById(id));
   }
 
   @PutMapping("/{id}")

@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +41,7 @@ public class ResourceServiceImpl implements ResourceService {
   @Value("${file.path}")
   private String filePath;
 
+
   @Override
   public Page<ResourceDto> list(
       Optional<Filter> filter,
@@ -59,9 +62,8 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   @Override
-  public ResourceDto getById(String id, String fields) {
+  public ResourceDto getById(String id) {
     log.info("Resource get by id({})", id);
-    // TODO: Implementar o uso do campo fields (campos a serem incluídos na resposta que são entidades estrangeiras) ...
     return ResourceMapper.getInstance().map(resourceRepositoryAccess.findById(id));
   }
 
@@ -115,7 +117,7 @@ public class ResourceServiceImpl implements ResourceService {
       ResourceMapper.getInstance().map(entity, path);
       resourceRepositoryAccess.saveOrUpdate(entity);
     }
-    catch (IOException e) {
+    catch (Exception e) {
       throw new FileException(ConstantsUtil.ERROR_UNABLE_UPLOAD);
     }
   }
@@ -129,7 +131,7 @@ public class ResourceServiceImpl implements ResourceService {
       //TODO: Implementar o download já como tipo do documento (.pdf, docx, etc...)
       return new UrlResource(Paths.get(entity.getCvUri()).toUri());
     }
-    catch (IOException e) {
+    catch (Exception e) {
       throw new FileException(ConstantsUtil.ERROR_UNABLE_DOWNLOAD);
     }
   }

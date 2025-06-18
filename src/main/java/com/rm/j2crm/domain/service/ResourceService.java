@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ResourceService {
     Page<ResourceDto> list(Optional<Filter> filter, Optional<Integer> page, Optional<Integer> size, Optional<String> sort);
-    ResourceDto getById(String id, String fields);
+    ResourceDto getById(String id);
     ResourceDto create(ResourceDto project);
     ResourceDto update(String id, ResourceDto project);
     void remove(String id);

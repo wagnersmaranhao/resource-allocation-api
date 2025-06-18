@@ -37,9 +37,8 @@ public class ResourcesController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ResourceDto> detail(
-      @PathVariable String id, @RequestParam(required = false) String fields) {
-    return ResponseEntity.ok(resourceService.getById(id, fields));
+  public ResponseEntity<ResourceDto> detail(@PathVariable String id) {
+    return ResponseEntity.ok(resourceService.getById(id));
   }
 
   @PutMapping("/{id}")
